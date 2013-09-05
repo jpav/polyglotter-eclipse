@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>org.polyglotter</groupId>
+    <artifactId>polyglotter-eclipse-plugins</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  
+  <artifactId>org.polyglotter.eclipse</artifactId>
+  
+  <name>Polyglotter Eclipse Plug-in</name>
+  <description>A library for performing data transformations</description>
+  
+  <dependencies>
+
+    <!-- XForm Engine -->
+    <dependency>
+      <groupId>org.polyglotter</groupId>
+      <artifactId>polyglotter-engine</artifactId>
+      <version>${polyglotter-engine.version}</version>
+    </dependency>
+    
+  </dependencies>
+
+</project>
