@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>org.jboss.xform</groupId>
+    <artifactId>xform-eclipse</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  
+  <artifactId>xform-eclipse-plugins</artifactId>
+  <packaging>pom</packaging>
+
+  <name>XForm Eclipse Plug-ins</name>
+  <description>All Eclipse plug-ins related to data transformations</description>
+  
+  <modules>
+	<module>org.jboss.xform.eclipse</module>
+  </modules>
+  
+</project>
