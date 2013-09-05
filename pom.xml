@@ -1,18 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.jboss.xform</groupId>
-  <artifactId>xform-eclipse</artifactId>
+  <groupId>org.polyglotter</groupId>
+  <artifactId>polyglotter-eclipse</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   
-  <name>XForm Eclipse-Related Projects</name>
+  <name>Polyglotter Eclipse-Related Projects</name>
   <inceptionYear>2013</inceptionYear>
 
   <scm>
-    <connection>scm:git:git@github.com:XForm/xform-eclipse.git</connection>
-    <developerConnection>scm:git:git@github.com:XForm/xform-eclipse.git</developerConnection>
-    <url>scm:git:git@github.com:XForm/xform-eclipse.git</url>
+    <connection>scm:git:git@github.com:Polyglotter/polyglotter-eclipse.git</connection>
+    <developerConnection>scm:git:git@github.com:Polyglotter/polyglotter-eclipse.git</developerConnection>
+    <url>scm:git:git@github.com:Polyglotter/polyglotter-eclipse.git</url>
   </scm>
 
   <developers>
@@ -72,7 +72,7 @@
     <slf4j.api.version>1.5.11</slf4j.api.version>
     <slf4j.log4j.version>1.5.11</slf4j.log4j.version>
     <slf4j.nop.version>1.5.11</slf4j.nop.version>
-    <xform-engine.version>0.0.1-SNAPSHOT</xform-engine.version>
+    <polyglotter-engine.version>0.0.1-SNAPSHOT</polyglotter-engine.version>
     
   </properties>
 
