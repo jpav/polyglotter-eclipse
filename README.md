@@ -1,2 +1,2 @@
-xform-eclipse
-=============
+Polyglotter Eclipse Features
+============================

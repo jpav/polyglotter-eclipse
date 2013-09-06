@@ -43,7 +43,6 @@ public class Activator extends Plugin {
     private boolean infoEnabled;
     
     private Polyglotter polyglotter;
-    private Session session;
     
     /**
      * @return <code>true</code> if information-level logging is enabled
@@ -60,6 +59,7 @@ public class Activator extends Plugin {
     public void log( final int severity,
                      final String message,
                      final Throwable throwable ) {
+        // jpav figure out way to handle debug and trace
         if ( severity == IStatus.INFO && !infoLoggingEnabled() ) return;
         if ( plugin == null ) {
             if ( severity == IStatus.ERROR ) {
@@ -92,28 +92,28 @@ public class Activator extends Plugin {
      * @return the session to Polyglotter.
      */
     public Session polyglotterSession() {
-        if ( polyglotter == null ) try {
-            final ProgressMonitorDialog dlg = new ProgressMonitorDialog( null );
-            dlg.open();
-            dlg.getProgressMonitor().setTaskName( "Starting Polyglotter..." );
-            dlg.run( false, false, new IRunnableWithProgress() {
-                
-                @SuppressWarnings( "synthetic-access" )
-                @Override
-                public void run( final IProgressMonitor monitor ) throws InvocationTargetException {
-                    try {
-                        polyglotter = new Polyglotter( "repository.json" );
-                        polyglotter.start(); // jpav Should be temporary
-                        session = polyglotter.session();
-                    } catch ( final Exception error ) {
-                        throw new InvocationTargetException( error );
+        try {
+            if ( polyglotter == null ) {
+                final ProgressMonitorDialog dlg = new ProgressMonitorDialog( null );
+                dlg.open();
+                dlg.getProgressMonitor().setTaskName( "Starting Polyglotter..." );
+                dlg.run( false, false, new IRunnableWithProgress() {
+                    
+                    @SuppressWarnings( "synthetic-access" )
+                    @Override
+                    public void run( final IProgressMonitor monitor ) throws InvocationTargetException {
+                        try {
+                            polyglotter = new Polyglotter();
+                        } catch ( final Throwable error ) {
+                            throw new InvocationTargetException( error );
+                        }
                     }
-                }
-            } );
-        } catch ( InvocationTargetException | InterruptedException error ) {
+                } );
+            }
+            return polyglotter.session();
+        } catch ( final Throwable error ) {
             throw new RuntimeException( error );
         }
-        return session;
     }
     
     /**
@@ -143,7 +143,6 @@ public class Activator extends Plugin {
     @Override
     public void stop( final BundleContext context ) throws Exception {
         // Close the workspace repository session and shutdown ModeShape
-        if ( session != null ) session.logout();
         if ( polyglotter != null ) polyglotter.stop();
         // Stop plug-in
         plugin = null;
