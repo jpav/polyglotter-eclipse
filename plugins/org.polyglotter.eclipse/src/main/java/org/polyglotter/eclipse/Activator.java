@@ -23,16 +23,9 @@
  */
 package org.polyglotter.eclipse;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.jcr.Session;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.osgi.framework.BundleContext;
 import org.polyglotter.Polyglotter;
 
@@ -53,7 +46,7 @@ public class Activator extends Plugin {
     
     private boolean infoEnabled;
     
-    private Polyglotter polyglotter;
+//    private Polyglotter polyglotter;
     
     /**
      * @return <code>true</code> if information-level logging is enabled
@@ -99,33 +92,34 @@ public class Activator extends Plugin {
         log( IStatus.ERROR, throwable );
     }
     
-    /**
-     * @return the session to Polyglotter.
-     */
-    public Session polyglotterSession() {
-        try {
-            if ( polyglotter == null ) {
-                final ProgressMonitorDialog dlg = new ProgressMonitorDialog( null );
-                dlg.open();
-                dlg.getProgressMonitor().setTaskName( "Starting Polyglotter..." );
-                dlg.run( false, false, new IRunnableWithProgress() {
-                    
-                    @SuppressWarnings( "synthetic-access" )
-                    @Override
-                    public void run( final IProgressMonitor monitor ) throws InvocationTargetException {
-                        try {
-                            polyglotter = new Polyglotter();
-                        } catch ( final Throwable error ) {
-                            throw new InvocationTargetException( error );
-                        }
-                    }
-                } );
-            }
-            return polyglotter.session();
-        } catch ( final Throwable error ) {
-            throw new RuntimeException( error );
-        }
-    }
+    //
+    // /**
+    // * @return the session to Polyglotter.
+    // */
+    // public Session polyglotterSession() {
+    // try {
+    // if ( polyglotter == null ) {
+    // final ProgressMonitorDialog dlg = new ProgressMonitorDialog( null );
+    // dlg.open();
+    // dlg.getProgressMonitor().setTaskName( "Starting Polyglotter..." );
+    // dlg.run( false, false, new IRunnableWithProgress() {
+    //
+    // @SuppressWarnings( "synthetic-access" )
+    // @Override
+    // public void run( final IProgressMonitor monitor ) throws InvocationTargetException {
+    // try {
+    // polyglotter = new Polyglotter();
+    // } catch ( final Throwable error ) {
+    // throw new InvocationTargetException( error );
+    // }
+    // }
+    // } );
+    // }
+    // return polyglotter.session();
+    // } catch ( final Throwable error ) {
+    // throw new RuntimeException( error );
+    // }
+    // }
     
     /**
      * @param enabled
@@ -154,7 +148,7 @@ public class Activator extends Plugin {
     @Override
     public void stop( final BundleContext context ) throws Exception {
         // Close the workspace repository session and shutdown ModeShape
-        if ( polyglotter != null ) polyglotter.stop();
+        // if ( polyglotter != null ) polyglotter.stop();
         // Stop plug-in
         plugin = null;
         super.stop( context );
