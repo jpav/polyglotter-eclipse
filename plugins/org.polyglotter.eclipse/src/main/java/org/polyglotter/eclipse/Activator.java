@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
-import org.polyglotter.Polyglotter;
 
 /**
  * Controls the plug-in life cycle
@@ -46,7 +45,7 @@ public class Activator extends Plugin {
     
     private boolean infoEnabled;
     
-//    private Polyglotter polyglotter;
+    // private Polyglotter polyglotter;
     
     /**
      * @return <code>true</code> if information-level logging is enabled
@@ -122,8 +121,7 @@ public class Activator extends Plugin {
     // }
     
     /**
-     * @param enabled
-     *            <code>true</code> if information-level logging is enabled
+     * @param enabled <code>true</code> if information-level logging is enabled
      */
     public void setInfoEnabled( final boolean enabled ) {
         infoEnabled = enabled;
