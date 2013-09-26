@@ -56,8 +56,11 @@ public class Activator extends Plugin {
     
     /**
      * @param severity
+     *        the message {@link IStatus severity}
      * @param message
+     *        a message to be logged
      * @param throwable
+     *        the error that caused this message to be logged
      */
     public void log( final int severity,
                      final String message,
@@ -77,7 +80,9 @@ public class Activator extends Plugin {
     
     /**
      * @param severity
+     *        the message {@link IStatus severity}
      * @param throwable
+     *        the error that caused this message to be logged
      */
     public void log( final int severity,
                      final Throwable throwable ) {
@@ -86,6 +91,7 @@ public class Activator extends Plugin {
     
     /**
      * @param throwable
+     *        the error that caused this message to be logged
      */
     public void log( final Throwable throwable ) {
         log( IStatus.ERROR, throwable );
@@ -121,7 +127,8 @@ public class Activator extends Plugin {
     // }
     
     /**
-     * @param enabled <code>true</code> if information-level logging is enabled
+     * @param enabled
+     *        <code>true</code> if information-level logging is enabled
      */
     public void setInfoEnabled( final boolean enabled ) {
         infoEnabled = enabled;
