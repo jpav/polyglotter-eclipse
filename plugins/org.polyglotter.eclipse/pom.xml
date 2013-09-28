@@ -14,7 +14,7 @@
   
   <dependencies>
 
-    <!-- XForm Engine -->
+    <!-- Polyglotter Engine -->
     <dependency>
       <groupId>org.polyglotter</groupId>
       <artifactId>polyglotter-engine</artifactId>
