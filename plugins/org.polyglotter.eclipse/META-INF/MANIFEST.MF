@@ -6,4 +6,12 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.9.0",
- org.eclipse.jface;bundle-version="3.9.0"
+ org.eclipse.core.resources;bundle-version="3.8.100",
+ org.eclipse.ui;bundle-version="3.105.0",
+ org.eclipse.gef;bundle-version="3.9.0"
+Bundle-Activator: org.polyglotter.eclipse.Activator
+Bundle-Vendor: %Bundle-Vendor
+Bundle-ClassPath: .,
+ repo/org/modeshape/modeshape-modeler/0.0.1-SNAPSHOT/modeshape-modeler-0.0.1-SNAPSHOT.jar,
+ repo/org/polyglotter/polyglotter-common/0.0.1-SNAPSHOT/polyglotter-common-0.0.1-SNAPSHOT.jar,
+ repo/org/polyglotter/polyglotter-engine/0.0.1-SNAPSHOT/polyglotter-engine-0.0.1-SNAPSHOT.jar

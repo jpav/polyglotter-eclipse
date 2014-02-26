@@ -6,8 +6,27 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   
-  <name>Polyglotter Eclipse-Related Projects</name>
+  <name>Polyglotter Eclipse</name>
   <inceptionYear>2013</inceptionYear>
+
+  <organization>
+    <name>JBoss, a division of Red Hat</name>
+    <url>http://www.jboss.org</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>Eclipse Public License</name>
+      <url>http://repository.jboss.org/licenses/epl-1.0.txt</url>
+      <distribution>repo</distribution>
+      <comments>A business-friendly OSS license</comments>
+    </license>
+  </licenses>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/Polyglotter/polyglotter-eclipse/issues</url>
+  </issueManagement>
 
   <scm>
     <connection>scm:git:git@github.com:Polyglotter/polyglotter-eclipse.git</connection>
@@ -45,13 +64,18 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
 
+    <!-- Only unit tests are run by default. -->
+    <skip.integration.tests>true</skip.integration.tests>
+    <skip.unit.tests>false</skip.unit.tests>
+
     <!-- Distribution URLs -->
     <jboss.releases.repo.url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</jboss.releases.repo.url>
     <jboss.snapshots.repo.url>https://repository.jboss.org/nexus/content/repositories/snapshots/</jboss.snapshots.repo.url>
 
     <!-- Maven plugin versions -->
     <maven.surefire.report.plugin.version>2.4.3</maven.surefire.report.plugin.version>
-    <maven.surefire.plugin.version>2.7.1</maven.surefire.plugin.version>
+    <maven.surefire.plugin.version>2.16</maven.surefire.plugin.version>
+    <maven.failsafe.plugin.version>2.16</maven.failsafe.plugin.version>
     <maven.assembly.plugin.version>2.2</maven.assembly.plugin.version>
     <maven.install.plugin.version>2.3.1</maven.install.plugin.version>
     <maven.javadoc.plugin.version>2.7</maven.javadoc.plugin.version>
@@ -62,6 +86,7 @@
     <maven.compiler.plugin.version>2.3.2</maven.compiler.plugin.version>
     <maven.source.plugin.version>2.1.2</maven.source.plugin.version>
     <maven.deploy.plugin.version>2.5</maven.deploy.plugin.version>
+    <build.helper.maven.plugin.version>1.8</build.helper.maven.plugin.version>
     <tycho-version>0.18.1</tycho-version>
 
     <!-- Dependency versions -->
@@ -72,9 +97,22 @@
     <slf4j.api.version>1.5.11</slf4j.api.version>
     <slf4j.log4j.version>1.5.11</slf4j.log4j.version>
     <slf4j.nop.version>1.5.11</slf4j.nop.version>
-    <polyglotter-engine.version>0.0.1-SNAPSHOT</polyglotter-engine.version>
+    <mockito.version>1.9.5</mockito.version>
     
   </properties>
+
+  <profiles>
+    <profile>
+      <id>integration-test</id>
+      <properties>
+        <!-- Used to locate the profile specific configuration file. -->
+        <build.profile.id>integration-test</build.profile.id>
+        <!-- Only integration tests are run. -->
+        <skip.integration.tests>false</skip.integration.tests>
+        <skip.unit.tests>true</skip.unit.tests>
+      </properties>
+    </profile>
+  </profiles>
 
   <build>
 
@@ -155,6 +193,12 @@
             </property>
           </systemProperties>
           <argLine>-Xmx368m -XX:MaxPermSize=128m</argLine>
+          <!-- Skips unit tests if the value of skip.unit.tests property is true -->
+          <skipTests>${skip.unit.tests}</skipTests>
+          <!-- Excludes integration tests when unit tests are run. -->
+          <excludes>
+              <exclude>**/IT*.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
 
@@ -167,8 +211,8 @@
         <version>${maven.jar.plugin.version}</version><!--$NO-MVN-MAN-VER$ -->
         <executions>
           <execution>
-            <id>test-jar</id>
             <goals>
+              <goal>jar</goal>
               <goal>test-jar</goal>
             </goals>
           </execution>
@@ -184,6 +228,48 @@
             </manifestEntries>
           </archive>
         </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build.helper.maven.plugin.version}</version><!--$NO-MVN-MAN-VER$ -->
+        <executions>
+          <!-- States that the plugin's add-test-source goal is executed at generate-test-sources phase. -->
+          <execution>
+            <id>add-integration-test-sources</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <!-- Configures the source directory of integration tests. -->
+              <sources>
+                <source>src/integration/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven.failsafe.plugin.version}</version>
+        <executions>
+          <!-- States that both integration-test and verify goals of the Failsafe Maven plugin are executed. -->
+          <execution>
+            <id>integration-tests</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <!-- Skips integration tests if the value of skip.integration.tests property is true -->
+              <skipTests>${skip.integration.tests}</skipTests>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     
       <plugin>
@@ -229,10 +315,31 @@
       </plugin>
       
     </plugins>
+    
   </build>
 
   <dependencyManagement>
     <dependencies>
+
+      <!-- Polyglotter -->
+      <dependency>
+        <groupId>org.polyglotter</groupId>
+        <artifactId>polyglotter-common</artifactId>
+        <version>${project.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.modeshape</groupId>
+        <artifactId>modeshape-modeler</artifactId>
+        <version>${project.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.polyglotter</groupId>
+        <artifactId>polyglotter-engine</artifactId>
+        <version>${project.version}</version>
+        <scope>compile</scope>
+      </dependency>
 
       <!-- ModeShape -->
       <dependency>
@@ -272,6 +379,12 @@
         <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -287,31 +400,48 @@
 
   <repositories>
     <repository>
-      <id>jboss-public-repository-group</id>
-      <name>JBoss Public Repository Group</name>
-      <url>http://repository.jboss.org/nexus/content/groups/developer/</url>
-      <layout>default</layout>
+      <id>central</id>
+      <name>Maven Central Repository</name>
+      <url>http://repo1.maven.org/maven2</url>
       <releases>
-        <enabled>true</enabled>
         <updatePolicy>never</updatePolicy>
       </releases>
       <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>daily</updatePolicy>
+        <enabled>false</enabled>
       </snapshots>
+    </repository>
+    <repository>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Repository Group</name>
+      <url>http://repository.jboss.org/nexus/content/groups/developer</url>
+      <layout>default</layout>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+    <repository>
+      <id>local</id>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <url>file:${project.basedir}/repo</url>
     </repository>
   </repositories>
 
   <pluginRepositories>
     <pluginRepository>
+      <id>sonatype-public-grid</id>
+      <url>https://repository.sonatype.org/content/groups/sonatype-public-grid</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>sonatype-public-repository</id>
+      <url>https://oss.sonatype.org/content/groups/public</url>
+    </pluginRepository>
+    <pluginRepository>
       <id>jboss-public-repository-group</id>
       <name>JBoss Public Repository Group</name>
-      <url>http://repository.jboss.org/nexus/content/groups/developer/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
+      <url>http://repository.jboss.org/nexus/content/groups/developer</url>
       <snapshots>
-        <enabled>true</enabled>
         <updatePolicy>always</updatePolicy>
       </snapshots>
     </pluginRepository>

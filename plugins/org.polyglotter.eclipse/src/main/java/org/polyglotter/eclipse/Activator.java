@@ -23,117 +23,44 @@
  */
 package org.polyglotter.eclipse;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 /**
  * Controls the plug-in life cycle
  */
-public class Activator extends Plugin {
-    
+public class Activator extends AbstractUIPlugin {
+
+    /**
+     * 
+     */
+    public static String ID = "org.polyglotter.eclipse";
+
     // The singleton instance of this plug-in
     private static Activator plugin;
-    
+
     /**
      * @return the singleton instance of this plug-in.
      */
     public static Activator plugin() {
         return plugin;
     }
-    
-    private boolean infoEnabled;
-    
+
     // private Polyglotter polyglotter;
-    
+
     /**
-     * @return <code>true</code> if information-level logging is enabled
+     * @param path
+     *        path to image
+     * @return the cached image with the supplied path
      */
-    public boolean infoLoggingEnabled() {
-        return infoEnabled;
+    public Image image( final String path ) {
+        final Image img = getImageRegistry().get( path );
+        if ( img != null ) return img;
+        getImageRegistry().put( path, imageDescriptorFromPlugin( ID, "icons/" + path ) );
+        return getImageRegistry().get( path );
     }
-    
-    /**
-     * @param severity
-     *        the message {@link IStatus severity}
-     * @param message
-     *        a message to be logged
-     * @param throwable
-     *        the error that caused this message to be logged
-     */
-    public void log( final int severity,
-                     final String message,
-                     final Throwable throwable ) {
-        // jpav figure out way to handle debug and trace
-        if ( severity == IStatus.INFO && !infoLoggingEnabled() ) return;
-        if ( plugin == null ) {
-            if ( severity == IStatus.ERROR ) {
-                System.err.println( message );
-                if ( throwable != null ) System.err.println( throwable );
-            } else {
-                System.out.println( message );
-                if ( throwable != null ) System.out.println( throwable );
-            }
-        } else getLog().log( new Status( severity, getBundle().getSymbolicName(), message, throwable ) );
-    }
-    
-    /**
-     * @param severity
-     *        the message {@link IStatus severity}
-     * @param throwable
-     *        the error that caused this message to be logged
-     */
-    public void log( final int severity,
-                     final Throwable throwable ) {
-        log( severity, throwable.getMessage(), throwable );
-    }
-    
-    /**
-     * @param throwable
-     *        the error that caused this message to be logged
-     */
-    public void log( final Throwable throwable ) {
-        log( IStatus.ERROR, throwable );
-    }
-    
-    //
-    // /**
-    // * @return the session to Polyglotter.
-    // */
-    // public Session polyglotterSession() {
-    // try {
-    // if ( polyglotter == null ) {
-    // final ProgressMonitorDialog dlg = new ProgressMonitorDialog( null );
-    // dlg.open();
-    // dlg.getProgressMonitor().setTaskName( "Starting Polyglotter..." );
-    // dlg.run( false, false, new IRunnableWithProgress() {
-    //
-    // @SuppressWarnings( "synthetic-access" )
-    // @Override
-    // public void run( final IProgressMonitor monitor ) throws InvocationTargetException {
-    // try {
-    // polyglotter = new Polyglotter();
-    // } catch ( final Throwable error ) {
-    // throw new InvocationTargetException( error );
-    // }
-    // }
-    // } );
-    // }
-    // return polyglotter.session();
-    // } catch ( final Throwable error ) {
-    // throw new RuntimeException( error );
-    // }
-    // }
-    
-    /**
-     * @param enabled
-     *        <code>true</code> if information-level logging is enabled
-     */
-    public void setInfoEnabled( final boolean enabled ) {
-        infoEnabled = enabled;
-    }
-    
+
     /**
      * {@inheritDoc}
      * 
@@ -143,8 +70,9 @@ public class Activator extends Plugin {
     public void start( final BundleContext context ) throws Exception {
         super.start( context );
         plugin = this;
+        // polyglotter = new Polyglotter( getStateLocation().toOSString() );
     }
-    
+
     /**
      * {@inheritDoc}
      * 
@@ -152,8 +80,8 @@ public class Activator extends Plugin {
      */
     @Override
     public void stop( final BundleContext context ) throws Exception {
-        // Close the workspace repository session and shutdown ModeShape
-        // if ( polyglotter != null ) polyglotter.stop();
+        // Close Polyglotter
+        // if ( polyglotter != null ) polyglotter.close();
         // Stop plug-in
         plugin = null;
         super.stop( context );
