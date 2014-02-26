@@ -17,8 +17,20 @@
     <!-- Polyglotter Engine -->
     <dependency>
       <groupId>org.polyglotter</groupId>
+      <artifactId>polyglotter-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.polyglotter</groupId>
       <artifactId>polyglotter-engine</artifactId>
-      <version>${polyglotter-engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.modeshape</groupId>
+      <artifactId>modeshape-modeler</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.jcr</groupId>
+      <artifactId>jcr</artifactId>
     </dependency>
     
   </dependencies>

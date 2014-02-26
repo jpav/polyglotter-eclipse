@@ -6,22 +6,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="repo/org/modeshape/modeshape-modeler/0.0.1-SNAPSHOT/modeshape-modeler-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="repo/org/polyglotter/polyglotter-common/0.0.1-SNAPSHOT/polyglotter-common-0.0.1-SNAPSHOT.jar"/>
+	<classpathentry exported="true" kind="lib" path="repo/org/polyglotter/polyglotter-engine/0.0.1-SNAPSHOT/polyglotter-engine-0.0.1-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

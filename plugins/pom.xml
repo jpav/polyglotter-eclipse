@@ -14,7 +14,7 @@
   <description>All Eclipse plug-ins related to Polyglotter</description>
   
   <modules>
-	<module>org.polyglotter.eclipse</module>
+    <module>org.polyglotter.eclipse</module>
   </modules>
   
 </project>
