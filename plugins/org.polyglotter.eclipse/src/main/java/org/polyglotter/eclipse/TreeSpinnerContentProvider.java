@@ -121,7 +121,7 @@ public abstract class TreeSpinnerContentProvider {
      * @return the preferred width of the cell for the supplied item. Default is 50.
      */
     public int preferredWidth( final Object item ) {
-        return 50;
+        return SWT.DEFAULT;
     }
 
     /**

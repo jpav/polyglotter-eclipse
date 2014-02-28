@@ -56,10 +56,11 @@ public class View extends ViewPart {
                 return name.isEmpty() ? "/" : name;
             }
 
-            @Override
-            public int preferredWidth( final Object item ) {
-                return 80;
-            }
+            //
+            // @Override
+            // public int preferredWidth( final Object item ) {
+            // return 80;
+            // }
 
             @Override
             public String type( final Object item ) {
