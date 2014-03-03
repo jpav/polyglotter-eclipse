@@ -15,3 +15,4 @@ Bundle-ClassPath: .,
  repo/org/modeshape/modeshape-modeler/0.0.1-SNAPSHOT/modeshape-modeler-0.0.1-SNAPSHOT.jar,
  repo/org/polyglotter/polyglotter-common/0.0.1-SNAPSHOT/polyglotter-common-0.0.1-SNAPSHOT.jar,
  repo/org/polyglotter/polyglotter-engine/0.0.1-SNAPSHOT/polyglotter-engine-0.0.1-SNAPSHOT.jar
+Bundle-Localization: OSGI-INF/l10n/bundle
