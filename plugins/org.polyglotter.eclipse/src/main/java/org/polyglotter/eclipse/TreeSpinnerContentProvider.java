@@ -28,6 +28,7 @@ import org.eclipse.draw2d.Shape;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+import org.polyglotter.common.PolyglotterException;
 
 /**
  * 
@@ -70,8 +71,11 @@ public abstract class TreeSpinnerContentProvider {
      * @param item
      *        an item in a tree
      * @return the children of the supplied item. Default is an empty array.
+     * @throws PolyglotterException
+     *         if there is a problem obtaining the children
      */
-    public Object[] children( final Object item ) {
+    @SuppressWarnings( "unused" )
+    public Object[] children( final Object item ) throws PolyglotterException {
         return new Object[ 0 ];
     }
 
@@ -101,8 +105,11 @@ public abstract class TreeSpinnerContentProvider {
      * @param item
      *        an item in a tree
      * @return <code>true</code> if the supplied item has children. Default is <code>false</code>.
+     * @throws PolyglotterException
+     *         if there is a problem determining if the item has children
      */
-    public boolean hasChildren( final Object item ) {
+    @SuppressWarnings( "unused" )
+    public boolean hasChildren( final Object item ) throws PolyglotterException {
         return false;
     }
 
@@ -110,8 +117,11 @@ public abstract class TreeSpinnerContentProvider {
      * @param item
      *        an item in a tree
      * @return the name of the supplied item's cell. Default is the item's {@link Object#toString()}
+     * @throws PolyglotterException
+     *         if there is a problem obtaining the name
      */
-    public String name( final Object item ) {
+    @SuppressWarnings( "unused" )
+    public String name( final Object item ) throws PolyglotterException {
         return item.toString();
     }
 
@@ -128,8 +138,11 @@ public abstract class TreeSpinnerContentProvider {
      * @param item
      *        an item in a tree
      * @return the type of the supplied item's cell. Default is the item's simple class name.
+     * @throws PolyglotterException
+     *         if there is a problem obtaining the type
      */
-    public String type( final Object item ) {
+    @SuppressWarnings( "unused" )
+    public String type( final Object item ) throws PolyglotterException {
         return item.getClass().getSimpleName();
     }
 
@@ -137,8 +150,11 @@ public abstract class TreeSpinnerContentProvider {
      * @param item
      *        an item in a tree
      * @return the value of the supplied item's cell. Default is <code>null</code>.
+     * @throws PolyglotterException
+     *         if there is a problem obtaining the value
      */
-    public String value( final Object item ) {
+    @SuppressWarnings( "unused" )
+    public String value( final Object item ) throws PolyglotterException {
         return null;
     }
 }

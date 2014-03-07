@@ -11,6 +11,7 @@
   
   <name>Polyglotter Eclipse Plug-in</name>
   <description>A library for performing data transformations</description>
+  <packaging>eclipse-plugin</packaging>
   
   <dependencies>
 
@@ -26,13 +27,33 @@
     <dependency>
       <groupId>org.modeshape</groupId>
       <artifactId>modeshape-modeler</artifactId>
-    </dependency>
-
+      </dependency>
     <dependency>
       <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
     </dependency>
-    
+
+    <!-- Testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.polyglotter</groupId>
+      <artifactId>polyglotter-engine</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.modeshape</groupId>
+      <artifactId>modeshape-modeler</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
 </project>

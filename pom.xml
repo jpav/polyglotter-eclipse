@@ -319,7 +319,14 @@
   </build>
 
   <dependencyManagement>
-    <dependencies>
+    <dependencies>    
+      <dependency>
+        <groupId>org.eclipse.gef</groupId>
+        <artifactId>org.eclipse.gef</artifactId>
+        <version>3.9.0</version>
+        <scope>compile</scope>
+      </dependency>
+
 
       <!-- Polyglotter -->
       <dependency>
@@ -426,6 +433,12 @@
       </snapshots>
       <url>file:${project.basedir}/repo</url>
     </repository>
+    <repository>
+      <id>kepler</id>
+      <url>http://download.eclipse.org/releases/kepler</url>
+      <layout>p2</layout>
+    </repository>
+
   </repositories>
 
   <pluginRepositories>

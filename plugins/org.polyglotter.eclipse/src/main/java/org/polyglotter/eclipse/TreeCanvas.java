@@ -46,6 +46,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.polyglotter.common.PolyglotterException;
 import org.polyglotter.eclipse.TreeSpinner.Column;
 
 class TreeCanvas extends FigureCanvas {
@@ -81,7 +82,7 @@ class TreeCanvas extends FigureCanvas {
             graphics.drawRoundRectangle( tempRect, 8, 8 );
         }
     };
-    final Border noFocusBorder = new LineBorder( focusBorder.getInsets( null ).top ) {
+    final Border noFocusBorder = new LineBorder( this.focusBorder.getInsets( null ).top ) {
 
         @Override
         public void paint( final IFigure figure,
@@ -97,9 +98,9 @@ class TreeCanvas extends FigureCanvas {
         this.treeSpinner = treeSpinner;
         // TODO get background color from preferences
         setBackground( Display.getCurrent().getSystemColor( SWT.COLOR_WHITE ) );
-        setContents( canvas );
+        setContents( this.canvas );
         getViewport().setContentsTracksHeight( true );
-        canvas.addMouseListener( new MouseListener() {
+        this.canvas.addMouseListener( new MouseListener() {
 
             @Override
             public void mouseDoubleClicked( final MouseEvent event ) {}
@@ -110,7 +111,7 @@ class TreeCanvas extends FigureCanvas {
             @Override
             public void mouseReleased( final MouseEvent event ) {
                 if ( event.button == 1 && ( event.getState() & SWT.MODIFIER_MASK ) == 0 ) {
-                    IFigure figure = canvas.findFigureAt( event.x, event.y );
+                    IFigure figure = TreeCanvas.this.canvas.findFigureAt( event.x, event.y );
                     if ( figure instanceof Label ) figure = figure.getParent();
                     if ( figure instanceof Shape ) {
                         // Find column of new focus cell
@@ -124,21 +125,26 @@ class TreeCanvas extends FigureCanvas {
                                         focusCell( column, ( Shape ) figure );
                                     }
                                     // Expand/collapse focus cell if its item has children
-                                    if ( provider.hasChildren( column.focusChild ) )
-                                        if ( column.focusCellExpanded ) removeColumnsAfter( column );
-                                        else {
-                                            treeSpinner.addColumn( column.focusChild );
-                                            column.focusCellExpanded = true;
-                                        }
+                                    try {
+                                        if ( TreeCanvas.this.provider.hasChildren( column.focusChild ) )
+                                            if ( column.focusCellExpanded )
+                                                removeColumnsAfter( column );
+                                            else {
+                                                treeSpinner.addColumn( column.focusChild );
+                                                column.focusCellExpanded = true;
+                                            }
+                                    } catch ( final PolyglotterException e ) {
+                                        Util.handleModelError( getShell(), e );
+                                    }
                                     // Change selected column
-                                    if ( column != selectedColumn ) {
-                                        if ( selectedColumn != null ) selectedColumn.backgroundColumn.setOpaque( false );
+                                    if ( column != TreeCanvas.this.selectedColumn ) {
+                                        if ( TreeCanvas.this.selectedColumn != null ) TreeCanvas.this.selectedColumn.backgroundColumn.setOpaque( false );
                                         column.backgroundColumn.setOpaque( true );
-                                        selectedColumn = column;
+                                        TreeCanvas.this.selectedColumn = column;
                                     }
                                     // Scroll so that focus line is at focus line offset from top of view and last column is visible
-                                    scrollToY( focusLine.getLocation().y - DEFAULT_FOCUS_LINE_OFFSET );
-                                    treeSpinner.scroll( canvas.getSize().width );
+                                    scrollToY( TreeCanvas.this.focusLine.getLocation().y - DEFAULT_FOCUS_LINE_OFFSET );
+                                    treeSpinner.scroll( TreeCanvas.this.canvas.getSize().width );
                                     break;
                                 }
                             if ( columnFound ) break;
@@ -151,21 +157,21 @@ class TreeCanvas extends FigureCanvas {
                 treeSpinner.removeColumnsAfter( column );
                 column.focusCellExpanded = false;
                 final Rectangle childColumnBounds = column.childColumn.getBounds();
-                canvas.setSize( childColumnBounds.x + childColumnBounds.width, canvas.getSize().height );
+                TreeCanvas.this.canvas.setSize( childColumnBounds.x + childColumnBounds.width, TreeCanvas.this.canvas.getSize().height );
             }
         } );
-        canvas.add( focusLine );
+        this.canvas.add( this.focusLine );
         // TODO get focus line color from preferences
-        focusLine.setBackgroundColor( DEFAULT_FOCUS_COLOR );
-        focusLine.setBounds( new Rectangle( 0, 0, 0, FOCUS_HEIGHT ) );
-        focusLine.addLayoutListener( new LayoutListener.Stub() {
+        this.focusLine.setBackgroundColor( DEFAULT_FOCUS_COLOR );
+        this.focusLine.setBounds( new Rectangle( 0, 0, 0, FOCUS_HEIGHT ) );
+        this.focusLine.addLayoutListener( new LayoutListener.Stub() {
 
             @Override
             public void postLayout( final IFigure container ) {
                 // Make focus line extend across entire canvas
-                final Rectangle bounds = focusLine.getBounds();
-                bounds.width = canvas.getBounds().width;
-                focusLine.setBounds( bounds );
+                final Rectangle bounds = TreeCanvas.this.focusLine.getBounds();
+                bounds.width = TreeCanvas.this.canvas.getBounds().width;
+                TreeCanvas.this.focusLine.setBounds( bounds );
             }
         } );
     }
@@ -173,10 +179,10 @@ class TreeCanvas extends FigureCanvas {
     void addColumn( final Column column ) {
         column.backgroundColumn = new Figure();
         // Add columns to beginning of canvas's children to ensure their backgrounds are painted first
-        canvas.add( column.backgroundColumn, 0 );
+        this.canvas.add( column.backgroundColumn, 0 );
         column.backgroundColumn.setBackgroundColor( DEFAULT_SELECTED_COLUMN_BACKGROUND_COLOR );
         column.childColumn = new Figure();
-        canvas.add( column.childColumn );
+        this.canvas.add( column.childColumn );
         final GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 20;
@@ -184,20 +190,24 @@ class TreeCanvas extends FigureCanvas {
 
         // Create cells
         int ndx = 0;
-        for ( final Object child : provider.children( column.item ) ) {
-            final Shape cell = provider.createCell( child );
-            // Focus on first cell
-            if ( column.focusCell == null ) column.focusCell = cell;
-            column.childColumn.add( cell );
-            column.childColumn.setConstraint( cell, new GridData( SWT.FILL, SWT.DEFAULT, false, false ) );
-            cell.setLayoutManager( new GridLayout() );
-            cell.setBorder( noFocusBorder );
-            cell.setBackgroundColor( provider.backgroundColor( child ) );
-            final Label label = new Label( String.valueOf( ndx++ ) );
-            cell.add( label );
-            label.setForegroundColor( provider.childIndexColor( column.item ) );
-            newLabel( provider.name( child ), cell, child, provider );
-            newLabel( provider.type( child ), cell, child, provider );
+        try {
+            for ( final Object child : this.provider.children( column.item ) ) {
+                final Shape cell = this.provider.createCell( child );
+                // Focus on first cell
+                if ( column.focusCell == null ) column.focusCell = cell;
+                column.childColumn.add( cell );
+                column.childColumn.setConstraint( cell, new GridData( SWT.FILL, SWT.DEFAULT, false, false ) );
+                cell.setLayoutManager( new GridLayout() );
+                cell.setBorder( this.noFocusBorder );
+                cell.setBackgroundColor( this.provider.backgroundColor( child ) );
+                final Label label = new Label( String.valueOf( ndx++ ) );
+                cell.add( label );
+                label.setForegroundColor( this.provider.childIndexColor( column.item ) );
+                newLabel( this.provider.name( child ), cell, child, this.provider );
+                newLabel( this.provider.type( child ), cell, child, this.provider );
+            }
+        } catch ( final PolyglotterException e ) {
+            Util.handleModelError( getShell(), e );
         }
 
         // Set size of first cell to focus on
@@ -207,17 +217,18 @@ class TreeCanvas extends FigureCanvas {
         // Set bounds
         final Dimension childColumnSize = column.childColumn.getPreferredSize();
         final int childColumnX;
-        if ( treeSpinner.columns.size() == 1 ) childColumnX = 0;
+        if ( this.treeSpinner.columns.size() == 1 )
+            childColumnX = 0;
         else {
             final Rectangle previousChildColumnBounds =
-                treeSpinner.columns.get( treeSpinner.columns.size() - 2 ).childColumn.getBounds();
+                this.treeSpinner.columns.get( this.treeSpinner.columns.size() - 2 ).childColumn.getBounds();
             childColumnX = previousChildColumnBounds.x + previousChildColumnBounds.width;
         }
         column.childColumn.setBounds( new Rectangle( childColumnX, 0, childColumnSize.width, childColumnSize.height ) );
         final int canvasWidth = childColumnX + childColumnSize.width;
-        focusLine.setSize( canvasWidth, focusLine.getSize().height );
-        final int canvasHeight = canvas.getSize().height;
-        canvas.setSize( canvasWidth, canvasHeight );
+        this.focusLine.setSize( canvasWidth, this.focusLine.getSize().height );
+        final int canvasHeight = this.canvas.getSize().height;
+        this.canvas.setSize( canvasWidth, canvasHeight );
         column.backgroundColumn.setBounds( new Rectangle( childColumnX, 0, childColumnSize.width, canvasHeight ) );
 
         // Focus on first cell
@@ -228,20 +239,24 @@ class TreeCanvas extends FigureCanvas {
                     final Shape focusCell ) {
 
         // Collapse previous focus cell and give it a no-focus border
-        column.focusCell.setBorder( noFocusBorder );
+        column.focusCell.setBorder( this.noFocusBorder );
 
         // Set new focus cell and child
         column.focusCell = focusCell;
-        focusCell.setBorder( focusBorder );
+        focusCell.setBorder( this.focusBorder );
         int ndx = 0;
         for ( final Object child : column.childColumn.getChildren() ) {
             if ( child == focusCell ) {
-                column.focusChild = provider.children( column.item )[ ndx ];
+                try {
+                    column.focusChild = this.provider.children( column.item )[ ndx ];
+                } catch ( final PolyglotterException e ) {
+                    Util.handleModelError( getShell(), e );
+                }
                 break;
             }
             ndx++;
         }
-        final Rectangle focusLineBounds = focusLine.getBounds();
+        final Rectangle focusLineBounds = this.focusLine.getBounds();
         int focusLineCenterY = focusLineBounds.y + focusLineBounds.height / 2;
         final Rectangle focusCellBounds = focusCell.getBounds();
         final int focusCellCenterY = focusCellBounds.y + focusCellBounds.height / 2;
@@ -250,7 +265,7 @@ class TreeCanvas extends FigureCanvas {
         int minY = Short.MAX_VALUE;
         int maxY = 0;
         final Rectangle reusableBounds = new Rectangle();
-        for ( final Column col : treeSpinner.columns ) {
+        for ( final Column col : this.treeSpinner.columns ) {
             reusableBounds.setBounds( col.childColumn.getBounds() );
             minY = Math.min( minY, reusableBounds.y );
             maxY = Math.max( maxY, reusableBounds.y + reusableBounds.height );
@@ -264,11 +279,11 @@ class TreeCanvas extends FigureCanvas {
         final Rectangle viewBounds = getViewport().getClientArea();
         final int bottomMargin = focusLineBounds.y + viewBounds.height - DEFAULT_FOCUS_LINE_OFFSET - maxY;
         if ( bottomMargin > 0 ) newCanvasHeight += bottomMargin;
-        final Rectangle canvasBounds = canvas.getBounds();
+        final Rectangle canvasBounds = this.canvas.getBounds();
         if ( newCanvasHeight != canvasBounds.height ) {
             canvasBounds.height = newCanvasHeight;
-            canvas.setBounds( canvasBounds );
-            for ( final Column col : treeSpinner.columns ) {
+            this.canvas.setBounds( canvasBounds );
+            for ( final Column col : this.treeSpinner.columns ) {
                 reusableBounds.setBounds( col.childColumn.getBounds() );
                 col.backgroundColumn.setBounds( new Rectangle( reusableBounds.x,
                                                                0,
@@ -279,8 +294,8 @@ class TreeCanvas extends FigureCanvas {
         if ( minY != 0 ) {
             focusLineCenterY -= minY;
             focusLineBounds.y -= minY;
-            focusLine.setBounds( focusLineBounds );
-            for ( final Column col : treeSpinner.columns ) {
+            this.focusLine.setBounds( focusLineBounds );
+            for ( final Column col : this.treeSpinner.columns ) {
                 // Update item backgroundColumn Y
                 reusableBounds.setBounds( col.childColumn.getBounds() );
                 reusableBounds.y -= minY;
@@ -303,7 +318,7 @@ class TreeCanvas extends FigureCanvas {
     }
 
     void removeColumn( final Column column ) {
-        canvas.remove( column.backgroundColumn );
-        canvas.remove( column.childColumn );
+        this.canvas.remove( column.backgroundColumn );
+        this.canvas.remove( column.childColumn );
     }
 }
