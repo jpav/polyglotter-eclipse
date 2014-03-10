@@ -23,6 +23,7 @@
  */
 package org.polyglotter.eclipse;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -39,6 +40,13 @@ public class Activator extends AbstractUIPlugin {
 
     // The singleton instance of this plug-in
     private static Activator plugin;
+
+    /**
+     * @return the logger of the singleton instance (never <code>null</code> when Eclipse platform is running)
+     */
+    public static ILog logger() {
+        return plugin.getLog();
+    }
 
     /**
      * @return the singleton instance of this plug-in.

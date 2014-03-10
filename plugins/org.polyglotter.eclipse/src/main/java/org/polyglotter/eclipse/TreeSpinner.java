@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.polyglotter.common.CheckArg;
+import org.polyglotter.common.PolyglotterException;
 
 /**
  * 
@@ -67,7 +68,7 @@ public class TreeSpinner extends Composite {
 
         @Override
         public void paintControl( final PaintEvent event ) {
-            event.gc.setBackground( pathButtonBar.getBackground() );
+            event.gc.setBackground( TreeSpinner.this.pathButtonBar.getBackground() );
             event.gc.fillRectangle( event.x, event.y, event.width, event.height );
             final Label label = ( Label ) event.widget;
             event.gc.setBackground( label.getBackground() );
@@ -131,8 +132,8 @@ public class TreeSpinner extends Composite {
         final Composite pathBar = new Composite( this, SWT.BORDER );
         GridDataFactory.swtDefaults().align( SWT.FILL, SWT.CENTER ).grab( true, false ).span( 4, 1 ).applyTo( pathBar );
         GridLayoutFactory.fillDefaults().margins( LayoutConstants.getSpacing().x, 0 ).numColumns( 3 ).applyTo( pathBar );
-        pathButtonBar = new Composite( pathBar, SWT.NONE );
-        RowLayoutFactory.fillDefaults().fill( true ).wrap( false ).applyTo( pathButtonBar );
+        this.pathButtonBar = new Composite( pathBar, SWT.NONE );
+        RowLayoutFactory.fillDefaults().fill( true ).wrap( false ).applyTo( this.pathButtonBar );
         toolBar = new ToolBar( pathBar, SWT.NONE );
         newToolBarButton( toolBar, SWT.PUSH, "copy.gif", "Copy the path of the selected column to the clipboard" );
         toolBar = new ToolBar( pathBar, SWT.NONE );
@@ -140,54 +141,54 @@ public class TreeSpinner extends Composite {
         newToolBarButton( toolBar, SWT.PUSH, "close.gif", "Close this path bar (Reopen using context menu)" );
 
         // Construct scrolling diagram area
-        scroller = new ScrolledComposite( this, SWT.H_SCROLL | SWT.V_SCROLL );
-        GridDataFactory.fillDefaults().grab( true, true ).span( 4, 1 ).applyTo( scroller );
-        scroller.setExpandVertical( true );
+        this.scroller = new ScrolledComposite( this, SWT.H_SCROLL | SWT.V_SCROLL );
+        GridDataFactory.fillDefaults().grab( true, true ).span( 4, 1 ).applyTo( this.scroller );
+        this.scroller.setExpandVertical( true );
 
         // Construct outer canvas
-        outerCanvas = new Composite( scroller, SWT.NONE );
+        this.outerCanvas = new Composite( this.scroller, SWT.NONE );
         // GridDataFactory.fillDefaults().grab( true, true ).applyTo( outerCanvas );
-        GridLayoutFactory.fillDefaults().spacing( 0, 0 ).applyTo( outerCanvas );
-        scroller.setContent( outerCanvas );
+        GridLayoutFactory.fillDefaults().spacing( 0, 0 ).applyTo( this.outerCanvas );
+        this.scroller.setContent( this.outerCanvas );
 
         // Construct header bar
-        headerBar = new Composite( outerCanvas, SWT.NONE );
-        GridDataFactory.swtDefaults().align( SWT.FILL, SWT.CENTER ).grab( true, false ).applyTo( headerBar );
-        GridLayoutFactory.fillDefaults().spacing( 0, 0 ).numColumns( 0 ).applyTo( headerBar );
+        this.headerBar = new Composite( this.outerCanvas, SWT.NONE );
+        GridDataFactory.swtDefaults().align( SWT.FILL, SWT.CENTER ).grab( true, false ).applyTo( this.headerBar );
+        GridLayoutFactory.fillDefaults().spacing( 0, 0 ).numColumns( 0 ).applyTo( this.headerBar );
 
         // Construct inner canvas
-        innerCanvas = new TreeCanvas( this, outerCanvas, SWT.NONE );
-        GridDataFactory.fillDefaults().grab( true, true ).applyTo( innerCanvas );
+        this.innerCanvas = new TreeCanvas( this, this.outerCanvas, SWT.NONE );
+        GridDataFactory.fillDefaults().grab( true, true ).applyTo( this.innerCanvas );
     }
 
-    void addColumn( final Object item ) {
+    void addColumn( final Object item ) throws PolyglotterException {
 
         // Add a new column
         final Column column = new Column();
-        columns.add( column );
+        this.columns.add( column );
         column.item = item;
 
         // Add button for column to path button bar
-        column.pathButton = new Label( pathButtonBar, SWT.NONE );
-        column.pathButton.setBackground( provider.backgroundColor( item ) );
-        column.pathButton.setForeground( provider.foregroundColor( item ) );
-        column.pathButton.setText( provider.name( item ) );
+        column.pathButton = new Label( this.pathButtonBar, SWT.NONE );
+        column.pathButton.setBackground( this.provider.backgroundColor( item ) );
+        column.pathButton.setForeground( this.provider.foregroundColor( item ) );
+        column.pathButton.setText( this.provider.name( item ) );
         final Point size = column.pathButton.computeSize( SWT.DEFAULT, SWT.DEFAULT );
         column.pathButton.setAlignment( SWT.CENTER );
         column.pathButton.setLayoutData( new RowData( size.x + 10, size.y ) );
-        column.pathButton.addPaintListener( pathButtonPaintListener );
-        pathButtonBar.getParent().layout();
+        column.pathButton.addPaintListener( this.pathButtonPaintListener );
+        this.pathButtonBar.getParent().layout();
 
         // Construct header
-        ( ( GridLayout ) headerBar.getLayout() ).numColumns++;
-        column.header = new Composite( headerBar, SWT.NONE );
+        ( ( GridLayout ) this.headerBar.getLayout() ).numColumns++;
+        column.header = new Composite( this.headerBar, SWT.NONE );
         GridLayoutFactory.fillDefaults().numColumns( 3 ).applyTo( column.header );
         column.header.setBackground( Display.getCurrent().getSystemColor( SWT.COLOR_GRAY ) );
-        column.header.addPaintListener( headerPaintListener );
+        column.header.addPaintListener( this.headerPaintListener );
         final Label childCount = new Label( column.header, SWT.NONE );
-        childCount.setText( String.valueOf( provider.childCount( item ) ) );
+        childCount.setText( String.valueOf( this.provider.childCount( item ) ) );
         final Label label = new Label( column.header, SWT.CENTER );
-        label.setText( provider.name( item ) );
+        label.setText( this.provider.name( item ) );
         final FontData fontData = label.getFont().getFontData()[ 0 ];
         fontData.setStyle( SWT.BOLD );
         label.setFont( new Font( Display.getCurrent(), fontData ) );
@@ -205,14 +206,14 @@ public class TreeSpinner extends Composite {
         GridDataFactory.swtDefaults().hint( width, SWT.DEFAULT ).applyTo( minimizeButton );
 
         // Add column to inner canvas
-        innerCanvas.addColumn( column );
+        this.innerCanvas.addColumn( column );
 
         // Update width of header to match child column width
         width = column.childColumn.getSize().width;
         GridDataFactory.swtDefaults().hint( width, SWT.DEFAULT ).applyTo( column.header );
-        headerBar.layout();
+        this.headerBar.layout();
 
-        outerCanvas.setSize( outerCanvas.computeSize( SWT.DEFAULT, outerCanvas.getSize().y ) );
+        this.outerCanvas.setSize( this.outerCanvas.computeSize( SWT.DEFAULT, this.outerCanvas.getSize().y ) );
     }
 
     //
@@ -244,20 +245,20 @@ public class TreeSpinner extends Composite {
     }
 
     void removeColumnsAfter( final Column column ) {
-        int ndx = columns.size() - 1;
-        for ( Column col = columns.get( ndx ); col != column; col = columns.get( --ndx ) ) {
+        int ndx = this.columns.size() - 1;
+        for ( Column col = this.columns.get( ndx ); col != column; col = this.columns.get( --ndx ) ) {
             col.header.dispose();
-            ( ( GridLayout ) headerBar.getLayout() ).numColumns--;
+            ( ( GridLayout ) this.headerBar.getLayout() ).numColumns--;
             col.pathButton.dispose();
-            innerCanvas.removeColumn( col );
-            columns.remove( ndx );
+            this.innerCanvas.removeColumn( col );
+            this.columns.remove( ndx );
         }
-        headerBar.layout();
-        pathButtonBar.getParent().layout();
+        this.headerBar.layout();
+        this.pathButtonBar.getParent().layout();
     }
 
     void scroll( final int innerCanvasWidth ) {
-        scroller.setOrigin( innerCanvasWidth - scroller.getClientArea().width, 0 );
+        this.scroller.setOrigin( innerCanvasWidth - this.scroller.getClientArea().width, 0 );
     }
 
     /**
@@ -265,17 +266,19 @@ public class TreeSpinner extends Composite {
      *        the root object of the tree
      * @param provider
      *        a tree content provider
+     * @throws PolyglotterException
+     *         if there is an error
      */
     public void setRootAndContentProvider( final Object root,
-                                           final TreeSpinnerContentProvider provider ) {
+                                           final TreeSpinnerContentProvider provider ) throws PolyglotterException {
         CheckArg.notNull( root, "root" );
         CheckArg.notNull( provider, "provider" );
         this.root = root;
         this.provider = provider;
-        innerCanvas.provider = provider;
-        for ( final Control control : pathButtonBar.getChildren() )
+        this.innerCanvas.provider = provider;
+        for ( final Control control : this.pathButtonBar.getChildren() )
             control.dispose();
-        for ( final Control control : headerBar.getChildren() )
+        for ( final Control control : this.headerBar.getChildren() )
             control.dispose();
         addColumn( root );
     }
