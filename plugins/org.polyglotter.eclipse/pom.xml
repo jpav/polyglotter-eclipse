@@ -11,7 +11,6 @@
   
   <name>Polyglotter Eclipse Plug-in</name>
   <description>A library for performing data transformations</description>
-  <packaging>eclipse-plugin</packaging>
   
   <dependencies>
 

@@ -32,17 +32,17 @@ import java.util.List;
 import org.modeshape.modeler.Model;
 import org.modeshape.modeler.ModelObject;
 import org.polyglotter.common.PolyglotterException;
-import org.polyglotter.eclipse.TreeSpinnerContentProvider;
+import org.polyglotter.eclipse.focustree.FocusTree;
 
 /**
  * A content provider for Polyglotter {@link Model models}.
  */
-public final class ModelContentProvider extends TreeSpinnerContentProvider {
+public final class ModelContentProvider extends FocusTree.Model {
 
     /**
      * {@inheritDoc}
      * 
-     * @see org.polyglotter.eclipse.TreeSpinnerContentProvider#children(java.lang.Object)
+     * @see org.polyglotter.eclipse.focustree.FocusTree.Model#children(java.lang.Object)
      */
     @Override
     public Object[] children( final Object item ) throws PolyglotterException {
@@ -115,7 +115,7 @@ public final class ModelContentProvider extends TreeSpinnerContentProvider {
     /**
      * {@inheritDoc}
      * 
-     * @see org.polyglotter.eclipse.TreeSpinnerContentProvider#hasChildren(java.lang.Object)
+     * @see org.polyglotter.eclipse.focustree.FocusTree.Model#hasChildren(java.lang.Object)
      */
     @Override
     public boolean hasChildren( final Object item ) throws PolyglotterException {
